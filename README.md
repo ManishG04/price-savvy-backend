@@ -55,18 +55,21 @@ price-savvy-backend/
 ## Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/ManishG04/price-savvy-backend.git
    cd price-savvy-backend
    ```
 
 2. **Create a virtual environment**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
+
    ```bash
    pip install -e .
    # Or using uv:
@@ -74,12 +77,14 @@ price-savvy-backend/
    ```
 
 4. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your configuration
    ```
 
 5. **Run the application**
+
    ```bash
    python main.py
    ```
@@ -89,30 +94,34 @@ price-savvy-backend/
 ## API Endpoints
 
 ### Health & Info
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/health` | GET | Health check with service status |
-| `/` | GET | API information and available endpoints |
+
+| Endpoint  | Method | Description                             |
+| --------- | ------ | --------------------------------------- |
+| `/health` | GET    | Health check with service status        |
+| `/`       | GET    | API information and available endpoints |
 
 ### Product Search (Primary Endpoints)
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/search` | GET | Search products across all sites |
-| `/api/v1/compare` | GET | Compare products by IDs |
-| `/api/v1/products/{id}` | GET | Get product details by ID |
-| `/api/v1/products?url={url}` | GET | Get product by URL |
+
+| Endpoint                     | Method | Description                      |
+| ---------------------------- | ------ | -------------------------------- |
+| `/api/v1/search`             | GET    | Search products across all sites |
+| `/api/v1/compare`            | GET    | Compare products by IDs          |
+| `/api/v1/products/{id}`      | GET    | Get product details by ID        |
+| `/api/v1/products?url={url}` | GET    | Get product by URL               |
 
 ### Additional Endpoints
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/v1/products/{id}/prices` | GET | Get price history |
-| `/api/v1/supported-sites` | GET | List supported e-commerce sites |
-| `/api/v1/scrape` | POST | Scrape single product URL |
-| `/api/v1/scrape/batch` | POST | Scrape multiple URLs |
+
+| Endpoint                       | Method | Description                     |
+| ------------------------------ | ------ | ------------------------------- |
+| `/api/v1/products/{id}/prices` | GET    | Get price history               |
+| `/api/v1/supported-sites`      | GET    | List supported e-commerce sites |
+| `/api/v1/scrape`               | POST   | Scrape single product URL       |
+| `/api/v1/scrape/batch`         | POST   | Scrape multiple URLs            |
 
 ## Usage Examples
 
 ### Search Products
+
 ```bash
 # Basic search
 curl "http://localhost:5000/api/v1/search?q=iphone"
@@ -122,11 +131,13 @@ curl "http://localhost:5000/api/v1/search?q=laptop&page=1&per_page=20&sort=price
 ```
 
 ### Compare Products
+
 ```bash
 curl "http://localhost:5000/api/v1/compare?ids=1,2,3"
 ```
 
 ### Get Product Details
+
 ```bash
 # By ID
 curl "http://localhost:5000/api/v1/products/1"
@@ -136,6 +147,7 @@ curl "http://localhost:5000/api/v1/products?url=https://www.amazon.in/dp/B0EXAMP
 ```
 
 ### Scrape a Product
+
 ```bash
 curl -X POST http://localhost:5000/api/v1/scrape \
   -H "Content-Type: application/json" \
@@ -145,6 +157,7 @@ curl -X POST http://localhost:5000/api/v1/scrape \
 ## API Response Format
 
 ### Successful Response
+
 ```json
 {
   "success": true,
@@ -154,6 +167,7 @@ curl -X POST http://localhost:5000/api/v1/scrape \
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,
@@ -163,6 +177,7 @@ curl -X POST http://localhost:5000/api/v1/scrape \
 ```
 
 ### Search Response with Pagination
+
 ```json
 {
   "success": true,
@@ -189,21 +204,21 @@ curl -X POST http://localhost:5000/api/v1/scrape \
 
 Key environment variables (see `.env.example`):
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `SCRAPER_TIMEOUT` | 5 | Request timeout in seconds |
-| `MAX_WORKERS` | 5 | Maximum concurrent scrapers |
-| `RATE_LIMIT_PER_MINUTE` | 10 | Requests per minute per IP |
-| `CACHE_TTL_SECONDS` | 300 | Cache time-to-live |
-| `FUZZY_MATCH_THRESHOLD` | 0.85 | Similarity threshold for deduplication |
+| Variable                | Default | Description                            |
+| ----------------------- | ------- | -------------------------------------- |
+| `SCRAPER_TIMEOUT`       | 5       | Request timeout in seconds             |
+| `MAX_WORKERS`           | 5       | Maximum concurrent scrapers            |
+| `RATE_LIMIT_PER_MINUTE` | 10      | Requests per minute per IP             |
+| `CACHE_TTL_SECONDS`     | 300     | Cache time-to-live                     |
+| `FUZZY_MATCH_THRESHOLD` | 0.85    | Similarity threshold for deduplication |
 
 ## Supported Sites
 
-| Site | Domain | Status |
-|------|--------|--------|
-| Amazon India | amazon.in | ✅ Active |
-| Amazon | amazon.com | ✅ Active |
-| Flipkart | flipkart.com | ✅ Active |
+| Site         | Domain       | Status    |
+| ------------ | ------------ | --------- |
+| Amazon India | amazon.in    | ✅ Active |
+| Amazon       | amazon.com   | ✅ Active |
+| Flipkart     | flipkart.com | ✅ Active |
 
 ## Technical Specifications
 
@@ -219,17 +234,20 @@ Key environment variables (see `.env.example`):
 ## Development
 
 ### Run in development mode
+
 ```bash
 FLASK_DEBUG=1 python main.py
 ```
 
 ### Run tests
+
 ```bash
 pytest
 pytest --cov=app  # With coverage
 ```
 
 ### Code formatting
+
 ```bash
 black app/
 flake8 app/
