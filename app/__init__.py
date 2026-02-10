@@ -39,9 +39,9 @@ def create_app(config_class=Config):
     # Enable CORS for frontend
     @app.after_request
     def add_cors_headers(response):
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
         return response
 
     # Register blueprints
@@ -55,12 +55,14 @@ def create_app(config_class=Config):
     register_error_handlers(app)
 
     # Serve frontend static files
-    frontend_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
-    
-    @app.route('/dashboard')
-    @app.route('/dashboard/')
+    frontend_folder = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "frontend"
+    )
+
+    @app.route("/dashboard")
+    @app.route("/dashboard/")
     def serve_dashboard():
-        return send_from_directory(frontend_folder, 'index.html')
+        return send_from_directory(frontend_folder, "index.html")
 
     # Health check route (PRD: lightweight health endpoint)
     @app.route("/health")

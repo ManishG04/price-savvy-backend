@@ -1081,11 +1081,13 @@ _max_log_entries = 200
 
 class FrontendLogHandler(logging.Handler):
     """Custom log handler to capture logs for frontend display."""
-    
+
     def emit(self, record):
         global _log_buffer
         log_entry = {
-            "timestamp": self.formatter.formatTime(record) if self.formatter else record.created,
+            "timestamp": (
+                self.formatter.formatTime(record) if self.formatter else record.created
+            ),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -1106,30 +1108,35 @@ logging.getLogger().addHandler(_frontend_handler)
 def get_logs():
     """
     Get recent server logs for frontend display.
-    
+
     Query Parameters:
         limit (optional): Number of log entries to return (default 50, max 200)
         level (optional): Filter by log level (INFO, WARNING, ERROR)
-    
+
     Returns:
         JSON with recent log entries.
     """
     limit = min(int(request.args.get("limit", 50)), _max_log_entries)
     level_filter = request.args.get("level", "").upper()
-    
+
     logs = _log_buffer[:limit]
-    
+
     if level_filter:
         logs = [log for log in logs if log["level"] == level_filter]
-    
-    return jsonify({
-        "success": True,
-        "data": {
-            "logs": logs,
-            "total": len(_log_buffer),
-            "returned": len(logs),
-        }
-    }), 200
+
+    return (
+        jsonify(
+            {
+                "success": True,
+                "data": {
+                    "logs": logs,
+                    "total": len(_log_buffer),
+                    "returned": len(logs),
+                },
+            }
+        ),
+        200,
+    )
 
 
 @api_bp.route("/logs/clear", methods=["POST"])

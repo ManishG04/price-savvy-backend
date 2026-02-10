@@ -4,92 +4,149 @@ A Flask-based REST API for scraping, comparing, and tracking product prices acro
 
 ## Features
 
-- 🔍 **Product Search**: Search products across Amazon and Flipkart simultaneously
+- 🔍 **Product Search**: Search products across 9 major e-commerce sites simultaneously
 - ⚖️ **Price Comparison**: Compare products with best-by metrics highlighted
 - 📊 **Price Tracking**: Track price history over time
-- � **Data Normalization**: Unified price format and 0-5 scale ratings
-- 🧹 **Deduplication**: Fuzzy matching to merge near-duplicate listings
-- ⚡ **Concurrent Scraping**: Fast multi-site scraping with ThreadPoolExecutor
-- 🛡️ **Rate Limiting**: Polite scraping with per-IP rate limits
-- � **Caching**: In-memory TTL cache for recent queries
+- 📝 **Data Normalization**: Unified price format and 0-5 scale ratings
+- 🧹 **Deduplication**: Fuzzy matching (85% threshold) to merge near-duplicate listings
+- ⚡ **Concurrent Scraping**: Fast multi-site scraping with ThreadPoolExecutor (max 5 workers)
+- 🛡️ **Rate Limiting**: Polite scraping with per-IP rate limits (10 req/min)
+- 📦 **Caching**: In-memory TTL cache (5 minutes) for recent queries
 - 🗄️ **SQLite Storage**: Persistent product and price history storage
+- 🌐 **Selenium Support**: JavaScript-rendered website scraping
+- 🖥️ **Web Dashboard**: Simple frontend for testing and monitoring
+- 📜 **Live Logs**: Real-time scraping activity logs
+
+## Supported E-Commerce Sites
+
+| Site         | Domain       | Scraper Type | Status       |
+| ------------ | ------------ | ------------ | ------------ |
+| Amazon India | amazon.in    | Requests     | ✅ Working   |
+| Flipkart     | flipkart.com | Requests     | ✅ Working   |
+| Snapdeal     | snapdeal.com | Requests     | ✅ Working   |
+| Myntra       | myntra.com   | Selenium     | ✅ Working   |
+| Croma        | croma.com    | Selenium     | ✅ Working   |
+| Ajio         | ajio.com     | Selenium     | ⚠️ Blocked\* |
+| TataCliq     | tatacliq.com | Selenium     | ⚠️ Blocked\* |
+| JioMart      | jiomart.com  | Selenium     | ⚠️ Blocked\* |
+| Meesho       | meesho.com   | Selenium     | ⚠️ Blocked\* |
+
+> \*These sites have advanced bot detection. May require residential proxies to work reliably.
 
 ## Project Structure
 
 ```
 price-savvy-backend/
 ├── app/
-│   ├── __init__.py           # Flask app factory
-│   ├── config.py             # Configuration settings
-│   ├── database.py           # SQLite database handler
+│   ├── __init__.py              # Flask app factory with CORS
+│   ├── config.py                # Configuration settings
+│   ├── database.py              # SQLite database handler
 │   ├── api/
-│   │   ├── __init__.py       # API blueprint
-│   │   └── routes.py         # API endpoints
+│   │   ├── __init__.py          # API blueprint
+│   │   └── routes.py            # API endpoints (13+ routes)
 │   ├── scrapers/
-│   │   ├── __init__.py
-│   │   ├── base_scraper.py   # Abstract base scraper
-│   │   ├── amazon_scraper.py # Amazon scraper
-│   │   └── flipkart_scraper.py # Flipkart scraper
+│   │   ├── __init__.py          # Scraper registry
+│   │   ├── base_scraper.py      # Abstract base scraper
+│   │   ├── selenium_driver.py   # WebDriver manager with anti-detection
+│   │   ├── selenium_scraper.py  # Base class for Selenium scrapers
+│   │   ├── amazon_scraper.py    # Amazon scraper (Requests)
+│   │   ├── flipkart_scraper.py  # Flipkart scraper (Requests)
+│   │   ├── snapdeal_scraper.py  # Snapdeal scraper (Requests)
+│   │   ├── myntra_scraper.py    # Myntra scraper (Selenium)
+│   │   ├── croma_scraper.py     # Croma scraper (Selenium)
+│   │   ├── ajio_scraper.py      # Ajio scraper (Selenium)
+│   │   ├── tatacliq_scraper.py  # TataCliq scraper (Selenium)
+│   │   ├── jiomart_scraper.py   # JioMart scraper (Selenium)
+│   │   └── meesho_scraper.py    # Meesho scraper (Selenium)
 │   ├── services/
 │   │   ├── __init__.py
-│   │   └── scraper_service.py # Concurrent scraping logic
+│   │   └── scraper_service.py   # Concurrent scraping logic
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── product.py        # Product model
-│   │   └── price_history.py  # Price history model
+│   │   ├── product.py           # Product model
+│   │   └── price_history.py     # Price history model
 │   ├── utils/
 │   │   ├── __init__.py
-│   │   ├── cache.py          # TTL cache implementation
-│   │   ├── rate_limiter.py   # Rate limiting
-│   │   ├── normalizer.py     # Data normalization & deduplication
-│   │   ├── validators.py     # Input validation
-│   │   └── helpers.py        # Helper functions
+│   │   ├── cache.py             # TTL cache implementation
+│   │   ├── rate_limiter.py      # Rate limiting
+│   │   ├── normalizer.py        # Data normalization & deduplication
+│   │   ├── validators.py        # Input validation
+│   │   └── helpers.py           # Helper functions
 │   └── errors/
-│       └── __init__.py       # Error handlers
-├── main.py                   # Application entry point
-├── pyproject.toml            # Project dependencies
-├── .env.example              # Environment variables template
-└── README.md
+│       └── __init__.py          # Error handlers
+├── frontend/
+│   └── index.html               # Web dashboard (single page app)
+├── scripts/
+│   ├── init_db.py               # Database initialization
+│   └── test_db.py               # Database testing
+├── main.py                      # Application entry point
+├── pyproject.toml               # Project dependencies (uv/pip)
+├── uv.lock                      # Locked dependencies
+└── README.md                    # This file
 ```
+
+## Requirements
+
+- Python 3.10+
+- Chrome/Chromium browser (for Selenium-based scrapers)
+- uv package manager (recommended) or pip
 
 ## Installation
 
-1. **Clone the repository**
+### Using uv (Recommended)
 
-   ```bash
-   git clone https://github.com/ManishG04/price-savvy-backend.git
-   cd price-savvy-backend
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/ManishG04/price-savvy-backend.git
+cd price-savvy-backend
 
-2. **Create a virtual environment**
+# Install dependencies with uv
+uv sync
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+# For Selenium support (optional but recommended)
+uv add selenium webdriver-manager
+```
 
-3. **Install dependencies**
+### Using pip
 
-   ```bash
-   pip install -e .
-   # Or using uv:
-   uv sync
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/ManishG04/price-savvy-backend.git
+cd price-savvy-backend
 
-4. **Set up environment variables**
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+# Install dependencies
+pip install -e .
 
-5. **Run the application**
+# For Selenium support (optional but recommended)
+pip install selenium webdriver-manager
+```
 
-   ```bash
-   python main.py
-   ```
+## Running the Application
 
-   The API will be available at `http://localhost:5000`
+### Start the Server
+
+```bash
+# Using uv
+uv run python main.py
+
+# Or directly (if venv activated)
+python main.py
+```
+
+The server will start at `http://localhost:5000`
+
+### Access Points
+
+| URL                               | Description                  |
+| --------------------------------- | ---------------------------- |
+| http://localhost:5000             | API root with endpoints info |
+| http://localhost:5000/dashboard   | Web Dashboard (UI)           |
+| http://localhost:5000/api/v1/docs | API Documentation            |
+| http://localhost:5000/health      | Health check                 |
 
 ## API Endpoints
 
@@ -111,12 +168,15 @@ price-savvy-backend/
 
 ### Additional Endpoints
 
-| Endpoint                       | Method | Description                     |
-| ------------------------------ | ------ | ------------------------------- |
-| `/api/v1/products/{id}/prices` | GET    | Get price history               |
-| `/api/v1/supported-sites`      | GET    | List supported e-commerce sites |
-| `/api/v1/scrape`               | POST   | Scrape single product URL       |
-| `/api/v1/scrape/batch`         | POST   | Scrape multiple URLs            |
+| Endpoint                       | Method | Description                       |
+| ------------------------------ | ------ | --------------------------------- |
+| `/api/v1/products/{id}/prices` | GET    | Get price history                 |
+| `/api/v1/supported-sites`      | GET    | List supported e-commerce sites   |
+| `/api/v1/scrape`               | POST   | Scrape single product URL         |
+| `/api/v1/scrape/batch`         | POST   | Scrape multiple URLs              |
+| `/api/v1/stats`                | GET    | Database and scraper statistics   |
+| `/api/v1/logs`                 | GET    | Get recent scraping activity logs |
+| `/api/v1/docs`                 | GET    | Full API documentation            |
 
 ## Usage Examples
 
@@ -202,40 +262,51 @@ curl -X POST http://localhost:5000/api/v1/scrape \
 
 ## Configuration
 
-Key environment variables (see `.env.example`):
+Key configuration settings (in `app/config.py`):
 
-| Variable                | Default | Description                            |
+| Setting                 | Default | Description                            |
 | ----------------------- | ------- | -------------------------------------- |
 | `SCRAPER_TIMEOUT`       | 5       | Request timeout in seconds             |
+| `SELENIUM_TIMEOUT`      | 15      | Selenium page load timeout             |
 | `MAX_WORKERS`           | 5       | Maximum concurrent scrapers            |
 | `RATE_LIMIT_PER_MINUTE` | 10      | Requests per minute per IP             |
-| `CACHE_TTL_SECONDS`     | 300     | Cache time-to-live                     |
+| `CACHE_TTL_SECONDS`     | 300     | Cache time-to-live (5 minutes)         |
 | `FUZZY_MATCH_THRESHOLD` | 0.85    | Similarity threshold for deduplication |
-
-## Supported Sites
-
-| Site         | Domain       | Status    |
-| ------------ | ------------ | --------- |
-| Amazon India | amazon.in    | ✅ Active |
-| Amazon       | amazon.com   | ✅ Active |
-| Flipkart     | flipkart.com | ✅ Active |
+| `SELENIUM_HEADLESS`     | True    | Run Chrome in headless mode            |
 
 ## Technical Specifications
 
 - **Language**: Python 3.10+
 - **Framework**: Flask with Blueprints
-- **Parsing**: BeautifulSoup4 with lxml
+- **HTML Parsing**: BeautifulSoup4 with lxml
 - **HTTP Client**: Requests with retries and timeouts
-- **Database**: SQLite
-- **Concurrency**: concurrent.futures.ThreadPoolExecutor
+- **Browser Automation**: Selenium WebDriver with webdriver-manager
+- **Database**: SQLite (built-in)
+- **Concurrency**: concurrent.futures.ThreadPoolExecutor (5 workers)
 - **Fuzzy Matching**: difflib.SequenceMatcher
 - **Caching**: Custom in-memory TTL cache
+
+## Web Dashboard
+
+The web dashboard provides a simple interface to interact with the API:
+
+- **Search Tab**: Search products across all sites
+- **Compare Tab**: Compare multiple products by ID
+- **Stats Tab**: View database statistics
+- **Logs Tab**: View real-time scraping activity
+- **Docs Tab**: View embedded API documentation
+
+Access it at: `http://localhost:5000/dashboard`
 
 ## Development
 
 ### Run in development mode
 
 ```bash
+# With uv
+FLASK_DEBUG=1 uv run python main.py
+
+# With pip
 FLASK_DEBUG=1 python main.py
 ```
 
@@ -246,12 +317,17 @@ pytest
 pytest --cov=app  # With coverage
 ```
 
-### Code formatting
+## Troubleshooting
 
-```bash
-black app/
-flake8 app/
-```
+### Selenium Issues
+
+1. **Chrome not found**: Install Chrome/Chromium browser
+2. **WebDriver issues**: The `webdriver-manager` package auto-downloads the correct driver
+3. **Sites blocking**: Some sites may block even Selenium. Consider using residential proxies.
+
+### Rate Limiting
+
+If you get rate limited errors, wait a minute or adjust `RATE_LIMIT_PER_MINUTE` in config.
 
 ## License
 

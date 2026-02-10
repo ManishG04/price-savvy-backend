@@ -1,323 +1,459 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Price Savvy - API Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #e0e0e0; }
-        h1 { margin-bottom: 20px; color: #4CAF50; }
-        h2 { margin: 20px 0 10px; color: #888; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        
-        .container { max-width: 1400px; margin: 0 auto; }
-        .row { display: flex; gap: 20px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 300px; }
-        
-        input, button, select { 
-            padding: 10px; 
-            font-family: monospace; 
-            font-size: 14px;
-            border: 1px solid #444;
-            background: #2a2a2a;
-            color: #e0e0e0;
-        }
-        input { width: 100%; margin-bottom: 10px; }
-        button { 
-            cursor: pointer; 
-            background: #4CAF50; 
-            border: none;
-            margin-right: 5px;
-            margin-bottom: 5px;
-        }
-        button:hover { background: #45a049; }
-        button.secondary { background: #666; }
-        button.secondary:hover { background: #555; }
-        
-        .output { 
-            background: #0d0d0d; 
-            padding: 15px; 
-            border: 1px solid #333;
-            max-height: 500px; 
-            overflow: auto; 
-            white-space: pre-wrap;
-            font-size: 12px;
-            line-height: 1.4;
-        }
-        .log-entry { margin-bottom: 5px; padding: 5px; border-bottom: 1px solid #222; }
-        .log-info { color: #4CAF50; }
-        .log-warning { color: #ff9800; }
-        .log-error { color: #f44336; }
-        
-        .status { padding: 5px 10px; border-radius: 3px; display: inline-block; margin: 10px 0; }
-        .status.online { background: #1b5e20; }
-        .status.offline { background: #b71c1c; }
-        
-        .product { 
-            background: #2a2a2a; 
-            padding: 10px; 
-            margin: 5px 0; 
-            border-left: 3px solid #4CAF50;
-        }
-        .product .title { color: #81c784; font-weight: bold; }
-        .product .price { color: #ffeb3b; font-size: 16px; }
-        .product .source { color: #888; font-size: 11px; }
-        
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-        .stat-box { background: #2a2a2a; padding: 15px; text-align: center; }
-        .stat-box .value { font-size: 24px; color: #4CAF50; }
-        .stat-box .label { color: #888; font-size: 12px; }
-        
-        .tabs { display: flex; gap: 5px; margin-bottom: 10px; }
-        .tab { padding: 10px 20px; background: #2a2a2a; cursor: pointer; border: 1px solid #444; }
-        .tab.active { background: #4CAF50; border-color: #4CAF50; }
-        
-        #compare-ids { width: 100%; }
-        .compare-result { margin-top: 10px; }
-        .best-pick { background: #1b5e20; padding: 10px; margin: 5px 0; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: monospace;
+        padding: 20px;
+        background: #1a1a1a;
+        color: #e0e0e0;
+      }
+      h1 {
+        margin-bottom: 20px;
+        color: #4caf50;
+      }
+      h2 {
+        margin: 20px 0 10px;
+        color: #888;
+        border-bottom: 1px solid #333;
+        padding-bottom: 5px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      .row {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+      .col {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      input,
+      button,
+      select {
+        padding: 10px;
+        font-family: monospace;
+        font-size: 14px;
+        border: 1px solid #444;
+        background: #2a2a2a;
+        color: #e0e0e0;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      button {
+        cursor: pointer;
+        background: #4caf50;
+        border: none;
+        margin-right: 5px;
+        margin-bottom: 5px;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      button.secondary {
+        background: #666;
+      }
+      button.secondary:hover {
+        background: #555;
+      }
+
+      .output {
+        background: #0d0d0d;
+        padding: 15px;
+        border: 1px solid #333;
+        max-height: 500px;
+        overflow: auto;
+        white-space: pre-wrap;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      .log-entry {
+        margin-bottom: 5px;
+        padding: 5px;
+        border-bottom: 1px solid #222;
+      }
+      .log-info {
+        color: #4caf50;
+      }
+      .log-warning {
+        color: #ff9800;
+      }
+      .log-error {
+        color: #f44336;
+      }
+
+      .status {
+        padding: 5px 10px;
+        border-radius: 3px;
+        display: inline-block;
+        margin: 10px 0;
+      }
+      .status.online {
+        background: #1b5e20;
+      }
+      .status.offline {
+        background: #b71c1c;
+      }
+
+      .product {
+        background: #2a2a2a;
+        padding: 10px;
+        margin: 5px 0;
+        border-left: 3px solid #4caf50;
+      }
+      .product .title {
+        color: #81c784;
+        font-weight: bold;
+      }
+      .product .price {
+        color: #ffeb3b;
+        font-size: 16px;
+      }
+      .product .source {
+        color: #888;
+        font-size: 11px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      .stat-box {
+        background: #2a2a2a;
+        padding: 15px;
+        text-align: center;
+      }
+      .stat-box .value {
+        font-size: 24px;
+        color: #4caf50;
+      }
+      .stat-box .label {
+        color: #888;
+        font-size: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+      .tab {
+        padding: 10px 20px;
+        background: #2a2a2a;
+        cursor: pointer;
+        border: 1px solid #444;
+      }
+      .tab.active {
+        background: #4caf50;
+        border-color: #4caf50;
+      }
+
+      #compare-ids {
+        width: 100%;
+      }
+      .compare-result {
+        margin-top: 10px;
+      }
+      .best-pick {
+        background: #1b5e20;
+        padding: 10px;
+        margin: 5px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🛒 Price Savvy Dashboard</h1>
-        
-        <div id="server-status">
-            <span class="status offline">Checking...</span>
-        </div>
+      <h1>🛒 Price Savvy Dashboard</h1>
 
-        <div class="tabs">
-            <div class="tab active" onclick="showTab('search')">Search</div>
-            <div class="tab" onclick="showTab('compare')">Compare</div>
-            <div class="tab" onclick="showTab('stats')">Stats</div>
-            <div class="tab" onclick="showTab('logs')">Logs</div>
-            <div class="tab" onclick="showTab('docs')">API Docs</div>
-        </div>
+      <div id="server-status">
+        <span class="status offline">Checking...</span>
+      </div>
 
-        <!-- Search Tab -->
-        <div id="tab-search" class="tab-content">
-            <h2>Product Search</h2>
-            <input type="text" id="search-query" placeholder="Search query (e.g., wireless earbuds)" value="laptop">
-            <div>
-                <select id="sort-by">
-                    <option value="price">Sort by Price</option>
-                    <option value="rating">Sort by Rating</option>
-                </select>
-                <select id="sort-order">
-                    <option value="asc">Ascending</option>
-                    <option value="desc">Descending</option>
-                </select>
-                <input type="number" id="per-page" value="10" min="1" max="50" style="width: 80px;" placeholder="Per page">
-            </div>
-            <button onclick="searchProducts()">🔍 Search</button>
-            <button class="secondary" onclick="clearResults()">Clear</button>
-            
-            <div id="search-results" class="output" style="margin-top: 10px;">
-                Results will appear here...
-            </div>
-        </div>
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('search')">Search</div>
+        <div class="tab" onclick="showTab('compare')">Compare</div>
+        <div class="tab" onclick="showTab('stats')">Stats</div>
+        <div class="tab" onclick="showTab('logs')">Logs</div>
+        <div class="tab" onclick="showTab('docs')">API Docs</div>
+      </div>
 
-        <!-- Compare Tab -->
-        <div id="tab-compare" class="tab-content" style="display: none;">
-            <h2>Compare Products</h2>
-            <input type="text" id="compare-ids" placeholder="Enter product IDs (comma-separated, e.g., 1,2,3)">
-            <button onclick="compareProducts()">⚖️ Compare</button>
-            
-            <div id="compare-results" class="output" style="margin-top: 10px;">
-                Comparison results will appear here...
-            </div>
+      <!-- Search Tab -->
+      <div id="tab-search" class="tab-content">
+        <h2>Product Search</h2>
+        <input
+          type="text"
+          id="search-query"
+          placeholder="Search query (e.g., wireless earbuds)"
+          value="laptop"
+        />
+        <div>
+          <select id="sort-by">
+            <option value="price">Sort by Price</option>
+            <option value="rating">Sort by Rating</option>
+          </select>
+          <select id="sort-order">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+          <input
+            type="number"
+            id="per-page"
+            value="10"
+            min="1"
+            max="50"
+            style="width: 80px"
+            placeholder="Per page"
+          />
         </div>
+        <button onclick="searchProducts()">🔍 Search</button>
+        <button class="secondary" onclick="clearResults()">Clear</button>
 
-        <!-- Stats Tab -->
-        <div id="tab-stats" class="tab-content" style="display: none;">
-            <h2>System Statistics</h2>
-            <button onclick="loadStats()">🔄 Refresh Stats</button>
-            
-            <div id="stats-display" class="stats-grid" style="margin-top: 10px;">
-                Loading...
-            </div>
+        <div id="search-results" class="output" style="margin-top: 10px">
+          Results will appear here...
         </div>
+      </div>
 
-        <!-- Logs Tab -->
-        <div id="tab-logs" class="tab-content" style="display: none;">
-            <h2>Live Logs</h2>
-            <button onclick="toggleLogs()">▶️ Start Logging</button>
-            <button class="secondary" onclick="clearLogs()">Clear Logs</button>
-            <span id="log-status" style="margin-left: 10px; color: #888;">Stopped</span>
-            
-            <div id="logs-display" class="output" style="margin-top: 10px; height: 400px;">
-                Logs will appear here when you start logging and make API requests...
-            </div>
-        </div>
+      <!-- Compare Tab -->
+      <div id="tab-compare" class="tab-content" style="display: none">
+        <h2>Compare Products</h2>
+        <input
+          type="text"
+          id="compare-ids"
+          placeholder="Enter product IDs (comma-separated, e.g., 1,2,3)"
+        />
+        <button onclick="compareProducts()">⚖️ Compare</button>
 
-        <!-- Docs Tab -->
-        <div id="tab-docs" class="tab-content" style="display: none;">
-            <h2>API Documentation</h2>
-            <button onclick="loadDocs()">📄 Load Docs</button>
-            
-            <div id="docs-display" class="output" style="margin-top: 10px;">
-                Click "Load Docs" to view API documentation...
-            </div>
+        <div id="compare-results" class="output" style="margin-top: 10px">
+          Comparison results will appear here...
         </div>
+      </div>
+
+      <!-- Stats Tab -->
+      <div id="tab-stats" class="tab-content" style="display: none">
+        <h2>System Statistics</h2>
+        <button onclick="loadStats()">🔄 Refresh Stats</button>
+
+        <div id="stats-display" class="stats-grid" style="margin-top: 10px">
+          Loading...
+        </div>
+      </div>
+
+      <!-- Logs Tab -->
+      <div id="tab-logs" class="tab-content" style="display: none">
+        <h2>Live Logs</h2>
+        <button onclick="toggleLogs()">▶️ Start Logging</button>
+        <button class="secondary" onclick="clearLogs()">Clear Logs</button>
+        <span id="log-status" style="margin-left: 10px; color: #888"
+          >Stopped</span
+        >
+
+        <div
+          id="logs-display"
+          class="output"
+          style="margin-top: 10px; height: 400px"
+        >
+          Logs will appear here when you start logging and make API requests...
+        </div>
+      </div>
+
+      <!-- Docs Tab -->
+      <div id="tab-docs" class="tab-content" style="display: none">
+        <h2>API Documentation</h2>
+        <button onclick="loadDocs()">📄 Load Docs</button>
+
+        <div id="docs-display" class="output" style="margin-top: 10px">
+          Click "Load Docs" to view API documentation...
+        </div>
+      </div>
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:5000/api/v1';
-        let loggingEnabled = false;
-        let logs = [];
+      const API_BASE = "http://localhost:5000/api/v1";
+      let loggingEnabled = false;
+      let logs = [];
 
-        // Check server status on load
-        async function checkServerStatus() {
-            const statusEl = document.getElementById('server-status');
-            try {
-                const res = await fetch('http://localhost:5000/health');
-                const data = await res.json();
-                if (data.status === 'healthy') {
-                    statusEl.innerHTML = '<span class="status online">✓ Server Online - ' + data.version + '</span>';
-                }
-            } catch (e) {
-                statusEl.innerHTML = '<span class="status offline">✗ Server Offline</span>';
-            }
+      // Check server status on load
+      async function checkServerStatus() {
+        const statusEl = document.getElementById("server-status");
+        try {
+          const res = await fetch("http://localhost:5000/health");
+          const data = await res.json();
+          if (data.status === "healthy") {
+            statusEl.innerHTML =
+              '<span class="status online">✓ Server Online - ' +
+              data.version +
+              "</span>";
+          }
+        } catch (e) {
+          statusEl.innerHTML =
+            '<span class="status offline">✗ Server Offline</span>';
         }
+      }
 
-        // Tab navigation
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).style.display = 'block';
-            event.target.classList.add('active');
-            
-            if (tabName === 'stats') loadStats();
-        }
+      // Tab navigation
+      function showTab(tabName) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((el) => (el.style.display = "none"));
+        document
+          .querySelectorAll(".tab")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("tab-" + tabName).style.display = "block";
+        event.target.classList.add("active");
 
-        // Search products
-        async function searchProducts() {
-            const query = document.getElementById('search-query').value;
-            const sortBy = document.getElementById('sort-by').value;
-            const sortOrder = document.getElementById('sort-order').value;
-            const perPage = document.getElementById('per-page').value;
-            
-            const resultsEl = document.getElementById('search-results');
-            resultsEl.innerHTML = 'Searching...';
-            addLog('INFO', `Searching for: ${query}`);
+        if (tabName === "stats") loadStats();
+      }
 
-            try {
-                const url = `${API_BASE}/search?q=${encodeURIComponent(query)}&sort=${sortBy}&order=${sortOrder}&per_page=${perPage}`;
-                const res = await fetch(url);
-                const data = await res.json();
+      // Search products
+      async function searchProducts() {
+        const query = document.getElementById("search-query").value;
+        const sortBy = document.getElementById("sort-by").value;
+        const sortOrder = document.getElementById("sort-order").value;
+        const perPage = document.getElementById("per-page").value;
 
-                if (data.success) {
-                    const products = data.data.products;
-                    const pagination = data.data.pagination;
-                    
-                    addLog('INFO', `Found ${pagination.total} products`);
-                    
-                    let html = `<div style="margin-bottom: 10px; color: #888;">
+        const resultsEl = document.getElementById("search-results");
+        resultsEl.innerHTML = "Searching...";
+        addLog("INFO", `Searching for: ${query}`);
+
+        try {
+          const url = `${API_BASE}/search?q=${encodeURIComponent(query)}&sort=${sortBy}&order=${sortOrder}&per_page=${perPage}`;
+          const res = await fetch(url);
+          const data = await res.json();
+
+          if (data.success) {
+            const products = data.data.products;
+            const pagination = data.data.pagination;
+
+            addLog("INFO", `Found ${pagination.total} products`);
+
+            let html = `<div style="margin-bottom: 10px; color: #888;">
                         Found ${pagination.total} products | Page ${pagination.page}/${pagination.total_pages} | 
-                        Cached: ${data.cached ? 'Yes' : 'No'}
+                        Cached: ${data.cached ? "Yes" : "No"}
                     </div>`;
-                    
-                    // Group by source
-                    const sources = {};
-                    products.forEach(p => {
-                        sources[p.source] = (sources[p.source] || 0) + 1;
-                    });
-                    html += `<div style="margin-bottom: 10px; color: #4CAF50;">
-                        Sources: ${Object.entries(sources).map(([k,v]) => `${k}(${v})`).join(', ')}
+
+            // Group by source
+            const sources = {};
+            products.forEach((p) => {
+              sources[p.source] = (sources[p.source] || 0) + 1;
+            });
+            html += `<div style="margin-bottom: 10px; color: #4CAF50;">
+                        Sources: ${Object.entries(sources)
+                          .map(([k, v]) => `${k}(${v})`)
+                          .join(", ")}
                     </div>`;
-                    
-                    products.forEach(p => {
-                        const price = p.price || p.best_price || 0;
-                        const rating = p.rating ? `⭐ ${p.rating.toFixed(1)}` : '';
-                        html += `
+
+            products.forEach((p) => {
+              const price = p.price || p.best_price || 0;
+              const rating = p.rating ? `⭐ ${p.rating.toFixed(1)}` : "";
+              html += `
                             <div class="product">
                                 <div class="title">[ID: ${p.id}] ${p.title}</div>
                                 <div class="price">₹${price.toLocaleString()} ${rating}</div>
                                 <div class="source">${p.source} | <a href="${p.url}" target="_blank" style="color: #64b5f6;">View →</a></div>
                             </div>
                         `;
-                    });
-                    
-                    resultsEl.innerHTML = html;
-                } else {
-                    resultsEl.innerHTML = `Error: ${data.error}\n${data.message || ''}`;
-                    addLog('ERROR', data.message || data.error);
-                }
-            } catch (e) {
-                resultsEl.innerHTML = `Error: ${e.message}`;
-                addLog('ERROR', e.message);
-            }
+            });
+
+            resultsEl.innerHTML = html;
+          } else {
+            resultsEl.innerHTML = `Error: ${data.error}\n${data.message || ""}`;
+            addLog("ERROR", data.message || data.error);
+          }
+        } catch (e) {
+          resultsEl.innerHTML = `Error: ${e.message}`;
+          addLog("ERROR", e.message);
+        }
+      }
+
+      // Compare products
+      async function compareProducts() {
+        const ids = document.getElementById("compare-ids").value;
+        const resultsEl = document.getElementById("compare-results");
+
+        if (!ids.trim()) {
+          resultsEl.innerHTML = "Please enter product IDs";
+          return;
         }
 
-        // Compare products
-        async function compareProducts() {
-            const ids = document.getElementById('compare-ids').value;
-            const resultsEl = document.getElementById('compare-results');
-            
-            if (!ids.trim()) {
-                resultsEl.innerHTML = 'Please enter product IDs';
-                return;
+        resultsEl.innerHTML = "Comparing...";
+        addLog("INFO", `Comparing products: ${ids}`);
+
+        try {
+          const res = await fetch(`${API_BASE}/compare?ids=${ids}`);
+          const data = await res.json();
+
+          if (data.success) {
+            const { products, best, count } = data.data;
+
+            let html = `<div style="margin-bottom: 10px;">Comparing ${count} products</div>`;
+
+            // Best picks
+            if (best.price) {
+              html += `<div class="best-pick">💰 LOWEST PRICE: ₹${best.price.value.toLocaleString()} (ID: ${best.price.product_ids.join(", ")})</div>`;
             }
-            
-            resultsEl.innerHTML = 'Comparing...';
-            addLog('INFO', `Comparing products: ${ids}`);
+            if (best.rating) {
+              html += `<div class="best-pick">⭐ HIGHEST RATED: ${best.rating.value} stars (ID: ${best.rating.product_ids.join(", ")})</div>`;
+            }
 
-            try {
-                const res = await fetch(`${API_BASE}/compare?ids=${ids}`);
-                const data = await res.json();
+            html += '<h3 style="margin-top: 15px;">Products:</h3>';
 
-                if (data.success) {
-                    const { products, best, count } = data.data;
-                    
-                    let html = `<div style="margin-bottom: 10px;">Comparing ${count} products</div>`;
-                    
-                    // Best picks
-                    if (best.price) {
-                        html += `<div class="best-pick">💰 LOWEST PRICE: ₹${best.price.value.toLocaleString()} (ID: ${best.price.product_ids.join(', ')})</div>`;
-                    }
-                    if (best.rating) {
-                        html += `<div class="best-pick">⭐ HIGHEST RATED: ${best.rating.value} stars (ID: ${best.rating.product_ids.join(', ')})</div>`;
-                    }
-                    
-                    html += '<h3 style="margin-top: 15px;">Products:</h3>';
-                    
-                    products.forEach(p => {
-                        const tags = [];
-                        if (p.is_best_price) tags.push('💰 BEST PRICE');
-                        if (p.is_best_rating) tags.push('⭐ BEST RATING');
-                        
-                        html += `
-                            <div class="product" style="border-color: ${p.is_best_price ? '#ffeb3b' : '#4CAF50'}">
+            products.forEach((p) => {
+              const tags = [];
+              if (p.is_best_price) tags.push("💰 BEST PRICE");
+              if (p.is_best_rating) tags.push("⭐ BEST RATING");
+
+              html += `
+                            <div class="product" style="border-color: ${p.is_best_price ? "#ffeb3b" : "#4CAF50"}">
                                 <div class="title">[${p.source.toUpperCase()}] ${p.title}</div>
-                                <div class="price">₹${p.price.toLocaleString()} ${p.rating ? `⭐ ${p.rating}` : ''}</div>
-                                <div style="color: #ffeb3b;">${tags.join(' | ')}</div>
+                                <div class="price">₹${p.price.toLocaleString()} ${p.rating ? `⭐ ${p.rating}` : ""}</div>
+                                <div style="color: #ffeb3b;">${tags.join(" | ")}</div>
                             </div>
                         `;
-                    });
-                    
-                    resultsEl.innerHTML = html;
-                    addLog('INFO', `Comparison complete: Best price ₹${best.price?.value || 'N/A'}`);
-                } else {
-                    resultsEl.innerHTML = `Error: ${data.message || data.error}`;
-                }
-            } catch (e) {
-                resultsEl.innerHTML = `Error: ${e.message}`;
-                addLog('ERROR', e.message);
-            }
+            });
+
+            resultsEl.innerHTML = html;
+            addLog(
+              "INFO",
+              `Comparison complete: Best price ₹${best.price?.value || "N/A"}`,
+            );
+          } else {
+            resultsEl.innerHTML = `Error: ${data.message || data.error}`;
+          }
+        } catch (e) {
+          resultsEl.innerHTML = `Error: ${e.message}`;
+          addLog("ERROR", e.message);
         }
+      }
 
-        // Load stats
-        async function loadStats() {
-            const statsEl = document.getElementById('stats-display');
-            
-            try {
-                const res = await fetch(`${API_BASE}/stats`);
-                const data = await res.json();
+      // Load stats
+      async function loadStats() {
+        const statsEl = document.getElementById("stats-display");
 
-                if (data.success) {
-                    const db = data.data.database;
-                    const cache = data.data.cache;
-                    
-                    let html = `
+        try {
+          const res = await fetch(`${API_BASE}/stats`);
+          const data = await res.json();
+
+          if (data.success) {
+            const db = data.data.database;
+            const cache = data.data.cache;
+
+            let html = `
                         <div class="stat-box">
                             <div class="value">${db.total_products}</div>
                             <div class="label">Total Products</div>
@@ -335,144 +471,157 @@
                             <div class="label">Cache TTL</div>
                         </div>
                     `;
-                    
-                    // Products by source
-                    if (db.products_by_source) {
-                        Object.entries(db.products_by_source).forEach(([source, count]) => {
-                            html += `
+
+            // Products by source
+            if (db.products_by_source) {
+              Object.entries(db.products_by_source).forEach(
+                ([source, count]) => {
+                  html += `
                                 <div class="stat-box">
                                     <div class="value">${count}</div>
                                     <div class="label">${source}</div>
                                 </div>
                             `;
-                        });
-                    }
-                    
-                    statsEl.innerHTML = html;
-                    addLog('INFO', 'Stats loaded');
-                }
-            } catch (e) {
-                statsEl.innerHTML = `Error loading stats: ${e.message}`;
+                },
+              );
             }
+
+            statsEl.innerHTML = html;
+            addLog("INFO", "Stats loaded");
+          }
+        } catch (e) {
+          statsEl.innerHTML = `Error loading stats: ${e.message}`;
         }
+      }
 
-        // Load API docs
-        async function loadDocs() {
-            const docsEl = document.getElementById('docs-display');
-            
-            try {
-                const res = await fetch(`${API_BASE}/docs`);
-                const data = await res.json();
+      // Load API docs
+      async function loadDocs() {
+        const docsEl = document.getElementById("docs-display");
 
-                if (data.success) {
-                    const docs = data.data;
-                    
-                    let html = `<h3>${docs.api_name} v${docs.version}</h3>`;
-                    html += `<p>${docs.description}</p>`;
-                    html += `<p style="color: #ff9800;">Rate Limit: ${docs.rate_limit}</p>`;
-                    
-                    // Selenium status
-                    if (docs.selenium_status) {
-                        const status = docs.selenium_status.available ? '✓ Available' : '✗ Not Available';
-                        const color = docs.selenium_status.available ? '#4CAF50' : '#f44336';
-                        html += `<p style="color: ${color};">Selenium: ${status}</p>`;
-                    }
-                    
-                    html += '<h3 style="margin-top: 15px;">Endpoints:</h3>';
-                    
-                    docs.endpoints.forEach(ep => {
-                        html += `
+        try {
+          const res = await fetch(`${API_BASE}/docs`);
+          const data = await res.json();
+
+          if (data.success) {
+            const docs = data.data;
+
+            let html = `<h3>${docs.api_name} v${docs.version}</h3>`;
+            html += `<p>${docs.description}</p>`;
+            html += `<p style="color: #ff9800;">Rate Limit: ${docs.rate_limit}</p>`;
+
+            // Selenium status
+            if (docs.selenium_status) {
+              const status = docs.selenium_status.available
+                ? "✓ Available"
+                : "✗ Not Available";
+              const color = docs.selenium_status.available
+                ? "#4CAF50"
+                : "#f44336";
+              html += `<p style="color: ${color};">Selenium: ${status}</p>`;
+            }
+
+            html += '<h3 style="margin-top: 15px;">Endpoints:</h3>';
+
+            docs.endpoints.forEach((ep) => {
+              html += `
                             <div style="margin: 10px 0; padding: 10px; background: #2a2a2a;">
                                 <strong style="color: #81c784;">${ep.method}</strong> 
                                 <code style="color: #64b5f6;">${docs.base_url}${ep.path}</code>
                                 <div style="color: #888; margin-top: 5px;">${ep.description}</div>
                             </div>
                         `;
-                    });
-                    
-                    docsEl.innerHTML = html;
-                }
-            } catch (e) {
-                docsEl.innerHTML = `Error loading docs: ${e.message}`;
-            }
+            });
+
+            docsEl.innerHTML = html;
+          }
+        } catch (e) {
+          docsEl.innerHTML = `Error loading docs: ${e.message}`;
         }
+      }
 
-        // Logging functions - now fetches from server
-        let logPollingInterval = null;
+      // Logging functions - now fetches from server
+      let logPollingInterval = null;
 
-        function addLog(level, message) {
-            const time = new Date().toLocaleTimeString();
-            const log = { time, level, message, logger: 'frontend' };
-            logs.unshift(log);
-            if (logs.length > 100) logs.pop();
+      function addLog(level, message) {
+        const time = new Date().toLocaleTimeString();
+        const log = { time, level, message, logger: "frontend" };
+        logs.unshift(log);
+        if (logs.length > 100) logs.pop();
+        updateLogsDisplay();
+      }
+
+      async function fetchServerLogs() {
+        try {
+          const res = await fetch(`${API_BASE}/logs?limit=50`);
+          const data = await res.json();
+          if (data.success) {
+            // Merge server logs with local logs
+            const serverLogs = data.data.logs.map((log) => ({
+              time: log.timestamp,
+              level: log.level,
+              message: `[${log.logger}] ${log.message}`,
+              isServer: true,
+            }));
+
+            // Keep only frontend logs that aren't duplicates
+            const frontendLogs = logs.filter((l) => !l.isServer);
+            logs = [...serverLogs.slice(0, 30), ...frontendLogs.slice(0, 20)];
             updateLogsDisplay();
+          }
+        } catch (e) {
+          console.log("Failed to fetch server logs:", e);
         }
+      }
 
-        async function fetchServerLogs() {
-            try {
-                const res = await fetch(`${API_BASE}/logs?limit=50`);
-                const data = await res.json();
-                if (data.success) {
-                    // Merge server logs with local logs
-                    const serverLogs = data.data.logs.map(log => ({
-                        time: log.timestamp,
-                        level: log.level,
-                        message: `[${log.logger}] ${log.message}`,
-                        isServer: true
-                    }));
-                    
-                    // Keep only frontend logs that aren't duplicates
-                    const frontendLogs = logs.filter(l => !l.isServer);
-                    logs = [...serverLogs.slice(0, 30), ...frontendLogs.slice(0, 20)];
-                    updateLogsDisplay();
-                }
-            } catch (e) {
-                console.log('Failed to fetch server logs:', e);
-            }
+      function updateLogsDisplay() {
+        const logsEl = document.getElementById("logs-display");
+        logsEl.innerHTML = logs
+          .map((log) => {
+            const levelClass = `log-${log.level.toLowerCase()}`;
+            const serverTag = log.isServer ? "🖥️" : "🌐";
+            return `<div class="log-entry ${levelClass}">${serverTag} [${log.time}] [${log.level}] ${log.message}</div>`;
+          })
+          .join("");
+      }
+
+      function toggleLogs() {
+        loggingEnabled = !loggingEnabled;
+        document.getElementById("log-status").textContent = loggingEnabled
+          ? "Running"
+          : "Stopped";
+        document.getElementById("log-status").style.color = loggingEnabled
+          ? "#4CAF50"
+          : "#888";
+
+        if (loggingEnabled) {
+          addLog("INFO", "Logging started - fetching server logs...");
+          fetchServerLogs();
+          logPollingInterval = setInterval(fetchServerLogs, 3000); // Poll every 3s
+        } else {
+          if (logPollingInterval) {
+            clearInterval(logPollingInterval);
+            logPollingInterval = null;
+          }
+          addLog("INFO", "Logging stopped");
         }
+      }
 
-        function updateLogsDisplay() {
-            const logsEl = document.getElementById('logs-display');
-            logsEl.innerHTML = logs.map(log => {
-                const levelClass = `log-${log.level.toLowerCase()}`;
-                const serverTag = log.isServer ? '🖥️' : '🌐';
-                return `<div class="log-entry ${levelClass}">${serverTag} [${log.time}] [${log.level}] ${log.message}</div>`;
-            }).join('');
-        }
+      async function clearLogs() {
+        logs = [];
+        try {
+          await fetch(`${API_BASE}/logs/clear`, { method: "POST" });
+        } catch (e) {}
+        document.getElementById("logs-display").innerHTML = "Logs cleared...";
+      }
 
-        function toggleLogs() {
-            loggingEnabled = !loggingEnabled;
-            document.getElementById('log-status').textContent = loggingEnabled ? 'Running' : 'Stopped';
-            document.getElementById('log-status').style.color = loggingEnabled ? '#4CAF50' : '#888';
-            
-            if (loggingEnabled) {
-                addLog('INFO', 'Logging started - fetching server logs...');
-                fetchServerLogs();
-                logPollingInterval = setInterval(fetchServerLogs, 3000); // Poll every 3s
-            } else {
-                if (logPollingInterval) {
-                    clearInterval(logPollingInterval);
-                    logPollingInterval = null;
-                }
-                addLog('INFO', 'Logging stopped');
-            }
-        }
+      function clearResults() {
+        document.getElementById("search-results").innerHTML =
+          "Results will appear here...";
+      }
 
-        async function clearLogs() {
-            logs = [];
-            try {
-                await fetch(`${API_BASE}/logs/clear`, { method: 'POST' });
-            } catch (e) {}
-            document.getElementById('logs-display').innerHTML = 'Logs cleared...';
-        }
-
-        function clearResults() {
-            document.getElementById('search-results').innerHTML = 'Results will appear here...';
-        }
-
-        // Initialize
-        checkServerStatus();
-        setInterval(checkServerStatus, 30000); // Check every 30s
+      // Initialize
+      checkServerStatus();
+      setInterval(checkServerStatus, 30000); // Check every 30s
     </script>
-</body>
+  </body>
 </html>
