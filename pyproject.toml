@@ -1,0 +1,26 @@
+[project]
+name = "price-savvy-backend"
+version = "0.1.0"
+description = "A Flask-based API for scraping and tracking product prices across e-commerce platforms"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.0.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "python-dotenv>=1.0.0",
+    "lxml>=5.0.0",
+    "urllib3>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+selenium = [
+    "selenium>=4.15.0",
+    "webdriver-manager>=4.0.0",
+]

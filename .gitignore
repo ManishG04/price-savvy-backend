@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+02-Backend-Development-PRD.pdf
+.venv/
+venv/
+PRD.md
