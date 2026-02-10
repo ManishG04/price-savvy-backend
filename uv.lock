@@ -739,7 +739,9 @@ dependencies = [
     { name = "lxml" },
     { name = "python-dotenv" },
     { name = "requests" },
+    { name = "selenium" },
     { name = "urllib3" },
+    { name = "webdriver-manager" },
 ]
 
 [package.optional-dependencies]
@@ -765,8 +767,10 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=4.1.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "requests", specifier = ">=2.31.0" },
+    { name = "selenium", specifier = ">=4.40.0" },
     { name = "selenium", marker = "extra == 'selenium'", specifier = ">=4.15.0" },
     { name = "urllib3", specifier = ">=2.0.0" },
+    { name = "webdriver-manager", specifier = ">=4.0.2" },
     { name = "webdriver-manager", marker = "extra == 'selenium'", specifier = ">=4.0.0" },
 ]
 provides-extras = ["dev", "selenium"]

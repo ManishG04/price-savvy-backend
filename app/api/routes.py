@@ -704,60 +704,82 @@ def get_api_docs():
         JSON with full API documentation including all endpoints,
         parameters, request/response examples, and supported sites.
     """
+    # Check if Selenium is available
+    from app.scrapers.selenium_driver import is_selenium_available
+
+    selenium_available = is_selenium_available()
+
     docs = {
         "api_name": "Price Savvy API",
         "version": "1.0.0",
         "base_url": "/api/v1",
         "description": "Price comparison backend API that scrapes product information from multiple Indian e-commerce websites.",
         "rate_limit": "10 requests per minute per IP",
+        "selenium_status": {
+            "available": selenium_available,
+            "message": (
+                "Selenium enabled for JS-rendered sites"
+                if selenium_available
+                else "Install with: uv pip install selenium webdriver-manager"
+            ),
+        },
         "supported_sites": {
             "active": [
                 {
                     "name": "Amazon",
                     "domains": ["amazon.in", "amazon.com"],
                     "features": ["search", "product_detail", "price_history"],
+                    "method": "requests",
                 },
                 {
                     "name": "Flipkart",
                     "domains": ["flipkart.com"],
                     "features": ["search", "product_detail", "price_history"],
+                    "method": "requests",
                 },
                 {
                     "name": "Snapdeal",
                     "domains": ["snapdeal.com"],
                     "features": ["search", "product_detail"],
+                    "method": "requests",
                 },
             ],
-            "available": [
+            "selenium_sites": [
                 {
                     "name": "Myntra",
                     "domains": ["myntra.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
                 {
                     "name": "Ajio",
                     "domains": ["ajio.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
                 {
                     "name": "Croma",
                     "domains": ["croma.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
                 {
                     "name": "TataCliq",
                     "domains": ["tatacliq.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
                 {
                     "name": "JioMart",
                     "domains": ["jiomart.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
                 {
                     "name": "Meesho",
                     "domains": ["meesho.com"],
-                    "status": "requires_browser_automation",
+                    "status": "active" if selenium_available else "requires_selenium",
+                    "method": "selenium",
                 },
             ],
         },
@@ -1050,3 +1072,69 @@ def get_api_docs():
     }
 
     return jsonify({"success": True, "data": docs}), 200
+
+
+# In-memory log buffer for frontend
+_log_buffer = []
+_max_log_entries = 200
+
+
+class FrontendLogHandler(logging.Handler):
+    """Custom log handler to capture logs for frontend display."""
+    
+    def emit(self, record):
+        global _log_buffer
+        log_entry = {
+            "timestamp": self.formatter.formatTime(record) if self.formatter else record.created,
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        _log_buffer.insert(0, log_entry)
+        if len(_log_buffer) > _max_log_entries:
+            _log_buffer.pop()
+
+
+# Setup frontend log handler
+_frontend_handler = FrontendLogHandler()
+_frontend_handler.setLevel(logging.INFO)
+_frontend_handler.setFormatter(logging.Formatter("%(asctime)s", "%H:%M:%S"))
+logging.getLogger().addHandler(_frontend_handler)
+
+
+@api_bp.route("/logs", methods=["GET"])
+def get_logs():
+    """
+    Get recent server logs for frontend display.
+    
+    Query Parameters:
+        limit (optional): Number of log entries to return (default 50, max 200)
+        level (optional): Filter by log level (INFO, WARNING, ERROR)
+    
+    Returns:
+        JSON with recent log entries.
+    """
+    limit = min(int(request.args.get("limit", 50)), _max_log_entries)
+    level_filter = request.args.get("level", "").upper()
+    
+    logs = _log_buffer[:limit]
+    
+    if level_filter:
+        logs = [log for log in logs if log["level"] == level_filter]
+    
+    return jsonify({
+        "success": True,
+        "data": {
+            "logs": logs,
+            "total": len(_log_buffer),
+            "returned": len(logs),
+        }
+    }), 200
+
+
+@api_bp.route("/logs/clear", methods=["POST"])
+def clear_logs():
+    """Clear the log buffer."""
+    global _log_buffer
+    _log_buffer = []
+    return jsonify({"success": True, "message": "Logs cleared"}), 200

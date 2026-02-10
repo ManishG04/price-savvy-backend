@@ -66,6 +66,22 @@ class Config:
     MAX_RETRIES = int(os.environ.get("MAX_RETRIES", 3))
     RETRY_BACKOFF_FACTOR = float(os.environ.get("RETRY_BACKOFF_FACTOR", 2.0))
 
+    # Selenium settings (PRD: Selenium as fallback for dynamic pages)
+    SELENIUM_ENABLED = os.environ.get("SELENIUM_ENABLED", "true").lower() == "true"
+    SELENIUM_HEADLESS = os.environ.get("SELENIUM_HEADLESS", "true").lower() == "true"
+    SELENIUM_TIMEOUT = int(os.environ.get("SELENIUM_TIMEOUT", 10))
+    SELENIUM_PAGE_LOAD_TIMEOUT = int(os.environ.get("SELENIUM_PAGE_LOAD_TIMEOUT", 30))
+
+    # Sites that require Selenium (JS-rendered or anti-bot protected)
+    SELENIUM_REQUIRED_SITES = [
+        "myntra.com",
+        "ajio.com",
+        "croma.com",
+        "tatacliq.com",
+        "jiomart.com",
+        "meesho.com",
+    ]
+
 
 class DevelopmentConfig(Config):
     """Development configuration."""

@@ -1,6 +1,6 @@
 """
 Tata CLiQ Scraper - Scraper for Tata CLiQ products
-As per PRD: BeautifulSoup4 for HTML parsing
+As per PRD: BeautifulSoup4 for HTML parsing, Selenium for dynamic content
 """
 
 import re
@@ -8,17 +8,26 @@ import json
 import logging
 from typing import Dict, List, Optional
 from bs4 import BeautifulSoup
-from app.scrapers.base_scraper import BaseScraper
+from app.scrapers.selenium_scraper import SeleniumScraper
 
 logger = logging.getLogger(__name__)
 
 
-class TataCliqScraper(BaseScraper):
-    """Scraper for Tata CLiQ product pages."""
+class TataCliqScraper(SeleniumScraper):
+    """Scraper for Tata CLiQ product pages. Uses Selenium for JS-rendered content."""
+
+    def __init__(self, use_selenium: bool = True, **kwargs):
+        """Initialize TataCliq scraper with Selenium support."""
+        super().__init__(use_selenium=use_selenium, **kwargs)
 
     @property
     def name(self) -> str:
         return "TataCliq"
+
+    @property
+    def wait_selector(self) -> Optional[str]:
+        """Wait for product grid to load."""
+        return ".ProductModule__base, .ProductList"
 
     @property
     def supported_domains(self) -> list:

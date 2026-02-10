@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+curl -s http://localhost:5000/ | python -c "import sys,json; print(json.dumps(json.load(sys.stdin), indent=2))"#!/usr/bin/env python
 """
 Database initialization script for Price Savvy Backend.
 Run this script to create/reset the database.

@@ -1,6 +1,6 @@
 """
 Myntra Scraper - Scraper for Myntra products
-As per PRD: BeautifulSoup4 for HTML parsing
+As per PRD: BeautifulSoup4 for HTML parsing, Selenium for dynamic content
 """
 
 import re
@@ -8,17 +8,33 @@ import json
 import logging
 from typing import Dict, List, Optional
 from bs4 import BeautifulSoup
-from app.scrapers.base_scraper import BaseScraper
+from app.scrapers.selenium_scraper import SeleniumScraper
+from app.scrapers.selenium_driver import is_selenium_available
 
 logger = logging.getLogger(__name__)
 
 
-class MyntraScraper(BaseScraper):
-    """Scraper for Myntra product pages."""
+class MyntraScraper(SeleniumScraper):
+    """Scraper for Myntra product pages. Uses Selenium for JS-rendered content."""
+
+    def __init__(self, use_selenium: bool = True, **kwargs):
+        """
+        Initialize Myntra scraper.
+
+        Args:
+            use_selenium: Use Selenium for fetching (recommended for Myntra)
+            **kwargs: Additional arguments for SeleniumScraper
+        """
+        super().__init__(use_selenium=use_selenium, **kwargs)
 
     @property
     def name(self) -> str:
         return "Myntra"
+
+    @property
+    def wait_selector(self) -> Optional[str]:
+        """Wait for product grid to load."""
+        return "li.product-base, .search-searchProductsContainer"
 
     @property
     def supported_domains(self) -> list:

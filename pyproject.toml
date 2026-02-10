@@ -11,6 +11,8 @@ dependencies = [
     "python-dotenv>=1.0.0",
     "lxml>=5.0.0",
     "urllib3>=2.0.0",
+    "selenium>=4.40.0",
+    "webdriver-manager>=4.0.2",
 ]
 
 [project.optional-dependencies]

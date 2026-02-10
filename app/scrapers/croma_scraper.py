@@ -1,6 +1,6 @@
 """
 Croma Scraper - Scraper for Croma (electronics) products
-As per PRD: BeautifulSoup4 for HTML parsing
+As per PRD: BeautifulSoup4 for HTML parsing, Selenium for dynamic content
 """
 
 import re
@@ -8,17 +8,26 @@ import json
 import logging
 from typing import Dict, List, Optional
 from bs4 import BeautifulSoup
-from app.scrapers.base_scraper import BaseScraper
+from app.scrapers.selenium_scraper import SeleniumScraper
 
 logger = logging.getLogger(__name__)
 
 
-class CromaScraper(BaseScraper):
-    """Scraper for Croma product pages."""
+class CromaScraper(SeleniumScraper):
+    """Scraper for Croma product pages. Uses Selenium for JS-rendered content."""
+
+    def __init__(self, use_selenium: bool = True, **kwargs):
+        """Initialize Croma scraper with Selenium support."""
+        super().__init__(use_selenium=use_selenium, **kwargs)
 
     @property
     def name(self) -> str:
         return "Croma"
+
+    @property
+    def wait_selector(self) -> Optional[str]:
+        """Wait for product listing to load."""
+        return ".product-item, .product-list"
 
     @property
     def supported_domains(self) -> list:
